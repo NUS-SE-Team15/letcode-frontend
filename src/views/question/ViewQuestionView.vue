@@ -131,7 +131,17 @@ const doSubmit = async () => {
  * 页面加载时，请求数据
  */
 onMounted(() => {
-  loadData();
+  // loadData();
+  question.value = {
+    acceptedNum: 2,
+    content: "What is the sum of two numbers????",
+    favourNum: 11,
+    id: props.id,
+    tags: ["二叉树"],
+    thumbNum: 22,
+    title: "A+B",
+    judgeConfig: {},
+  };
 });
 
 const changeCode = (value: string) => {
