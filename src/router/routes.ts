@@ -74,11 +74,10 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.ADMIN,
     },
   },
-  // {
-  //   path: "/",
-  //   name: "主页",
-  //   component: QuestionsView,
-  // },
+  {
+    path: "/",
+    redirect: "/questions",
+  },
   // {
   //   path: "/hide",
   //   name: "隐藏页面",
