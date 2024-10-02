@@ -60,7 +60,7 @@
           :language="form.language"
           :handle-change="changeCode"
         />
-        <a-divider size="0" />
+        <a-divider :size="0" />
         <a-button type="primary" style="min-width: 200px" @click="doSubmit">
           提交代码
         </a-button>
@@ -131,17 +131,17 @@ const doSubmit = async () => {
  * 页面加载时，请求数据
  */
 onMounted(() => {
-  // loadData();
-  question.value = {
-    acceptedNum: 2,
-    content: "What is the sum of two numbers????",
-    favourNum: 11,
-    id: props.id,
-    tags: ["二叉树"],
-    thumbNum: 22,
-    title: "A+B",
-    judgeConfig: {},
-  };
+  loadData();
+  // question.value = {
+  //   acceptedNum: 2,
+  //   content: "What is the sum of two numbers????",
+  //   favourNum: 11,
+  //   id: props.id,
+  //   tags: ["二叉树"],
+  //   thumbNum: 22,
+  //   title: "A+B",
+  //   judgeConfig: {},
+  // };
 });
 
 const changeCode = (value: string) => {

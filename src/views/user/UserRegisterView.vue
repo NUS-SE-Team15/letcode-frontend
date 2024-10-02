@@ -66,7 +66,7 @@ const handleSubmit = async () => {
   if (res.code === 0) {
     message.success("注册成功，请登录");
     router.push({
-      path: "/login",
+      path: "/user/login",
       replace: true,
     });
   } else {

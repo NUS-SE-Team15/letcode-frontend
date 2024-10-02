@@ -11,7 +11,7 @@
         <a-button type="primary" @click="doSubmit">提交</a-button>
       </a-form-item>
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :ref="tableRef"
       :columns="columns"
@@ -34,7 +34,9 @@
       <template #acceptedRate="{ record }">
         {{
           `${
-            record.submitNum ? record.acceptedNum / record.submitNum : "0"
+            record.submitNum
+              ? (record.acceptedNum / record.submitNum) * 100
+              : "0"
           }% (${record.acceptedNum}/${record.submitNum})`
         }}
       </template>
@@ -82,7 +84,7 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = Number(res.data.total);
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -99,21 +101,19 @@ watchEffect(() => {
  * 页面加载时，请求数据
  */
 onMounted(() => {
-  // loadData();
-  dataList.value = [
-    {
-      id: "1",
-      title: "A+D",
-      content: "新的题目内容",
-      tags: ["二叉树"],
-      answer: "新的答案",
-      acceptedNum: 1,
-      submitNum: 2,
-    },
-  ];
+  loadData();
+  // dataList.value = [
+  //   {
+  //     id: "1",
+  //     title: "A+D",
+  //     content: "新的题目内容",
+  //     tags: ["二叉树"],
+  //     answer: "新的答案",
+  //     acceptedNum: 1,
+  //     submitNum: 2,
+  //   },
+  // ];
 });
-
-// {id: "1", title: "A+ D", content: "新的题目内容", tags: "["二叉树"]", answer: "新的答案", submitNum: 0,…}
 
 const columns = [
   {
