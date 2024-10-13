@@ -20,7 +20,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: "http://LetCodeLB-988548293.ap-southeast-1.elb.amazonaws.com:8101",
+  BASE: "http://LetCodeBackEndServersLB-293987002.ap-southeast-1.elb.amazonaws.com:8101",
   VERSION: "1.0",
   WITH_CREDENTIALS: true,
   CREDENTIALS: "include",
