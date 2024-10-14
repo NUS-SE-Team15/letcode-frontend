@@ -1,17 +1,22 @@
 <template>
   <div id="questionsView">
-    <a-form :model="searchParams" layout="inline" v-if="false">
+    <a-form :model="searchParams" layout="inline">
       <a-form-item field="title" label="名称" style="min-width: 240px">
         <a-input v-model="searchParams.title" placeholder="请输入名称" />
       </a-form-item>
       <a-form-item field="tags" label="标签" style="min-width: 240px">
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签" />
+        <a-select
+          v-model="searchParams.tags"
+          placeholder="请输入标签"
+          multiple
+          allow-create
+        />
       </a-form-item>
       <a-form-item>
         <a-button type="primary" @click="doSubmit">提交</a-button>
       </a-form-item>
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :ref="tableRef"
       :columns="columns"
@@ -34,7 +39,9 @@
       <template #acceptedRate="{ record }">
         {{
           `${
-            record.submitNum ? record.acceptedNum / record.submitNum : "0"
+            record.submitNum
+              ? (record.acceptedNum / record.submitNum) * 100
+              : "0"
           }% (${record.acceptedNum}/${record.submitNum})`
         }}
       </template>
@@ -72,7 +79,7 @@ const total = ref(0);
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
   tags: [],
-  pageSize: 2,
+  pageSize: 20,
   current: 1,
 });
 
@@ -82,7 +89,7 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = Number(res.data.total);
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -99,21 +106,19 @@ watchEffect(() => {
  * 页面加载时，请求数据
  */
 onMounted(() => {
-  // loadData();
-  dataList.value = [
-    {
-      id: "1",
-      title: "A+D",
-      content: "新的题目内容",
-      tags: ["二叉树"],
-      answer: "新的答案",
-      acceptedNum: 1,
-      submitNum: 2,
-    },
-  ];
+  loadData();
+  // dataList.value = [
+  //   {
+  //     id: "1",
+  //     title: "A+D",
+  //     content: "新的题目内容",
+  //     tags: ["二叉树"],
+  //     answer: "新的答案",
+  //     acceptedNum: 1,
+  //     submitNum: 2,
+  //   },
+  // ];
 });
-
-// {id: "1", title: "A+ D", content: "新的题目内容", tags: "["二叉树"]", answer: "新的答案", submitNum: 0,…}
 
 const columns = [
   {

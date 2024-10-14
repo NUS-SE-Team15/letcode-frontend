@@ -55,6 +55,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.USER,
+      // access: ACCESS_ENUM.ADMIN,
     },
   },
   {
@@ -74,11 +75,13 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.ADMIN,
     },
   },
-  // {
-  //   path: "/",
-  //   name: "主页",
-  //   component: QuestionsView,
-  // },
+  {
+    path: "/",
+    redirect: "/questions",
+    meta: {
+      hideInMenu: true,
+    },
+  },
   // {
   //   path: "/hide",
   //   name: "隐藏页面",

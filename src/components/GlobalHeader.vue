@@ -23,7 +23,7 @@
     </a-col>
     <a-col flex="100px">
       <div>
-        {{ store.state.user?.loginUser?.userName ?? "未登录" }}
+        {{ store.state.user?.loginUser?.userAccount ?? "未登录" }}
       </div>
     </a-col>
   </a-row>
@@ -38,6 +38,7 @@ import checkAccess from "@/access/checkAccess";
 import ACCESS_ENUM from "@/access/accessEnum";
 
 const router = useRouter();
+const route = useRoute();
 const store = useStore();
 
 // 展示在菜单的路由数组
@@ -47,30 +48,23 @@ const visibleRoutes = computed(() => {
       return false;
     }
     // 根据权限过滤菜单
-    if (
-      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
-    ) {
-      return false;
-    }
-    return true;
+    return checkAccess(
+      store.state.user.loginUser,
+      item?.meta?.access as string
+    );
   });
 });
 
 // 默认主页
-const selectedKeys = ref(["/"]);
+const selectedKeys = ref([route.path]);
 
 // 路由跳转后，更新选中的菜单项
 router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
-console.log();
-
 setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "管理员",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
+  store.dispatch("user/getLoginUser");
 }, 3000);
 
 const doMenuClick = (key: string) => {
