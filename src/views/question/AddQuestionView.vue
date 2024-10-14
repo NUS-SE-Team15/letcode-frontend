@@ -6,7 +6,13 @@
         <a-input v-model="form.title" placeholder="请输入标题" />
       </a-form-item>
       <a-form-item field="tags" label="标签">
-        <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
+        <a-select
+          v-model="form.tags"
+          placeholder="请输入标签"
+          allow-clear
+          allow-create
+          multiple
+        />
       </a-form-item>
       <a-form-item field="content" label="题目内容">
         <MdEditor :value="form.content" :handle-change="onContentChange" />
@@ -98,13 +104,16 @@
 </template>
 
 <script setup lang="ts">
+alert("为方便测试，现在已登录的用户也显示创建题目功能");
+
 import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 // 如果页面地址包含 update，视为更新页面
 const updatePage = route.path.includes("update");
 
@@ -182,6 +191,9 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("更新成功");
+      setTimeout(() => {
+        router.replace("/manage/question");
+      }, 1500);
     } else {
       message.error("更新失败，" + res.message);
     }
@@ -191,6 +203,9 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("创建成功");
+      setTimeout(() => {
+        router.replace("/questions");
+      }, 1500);
     } else {
       message.error("创建失败，" + res.message);
     }

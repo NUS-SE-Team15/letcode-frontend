@@ -55,6 +55,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.USER,
+      // access: ACCESS_ENUM.ADMIN,
     },
   },
   {
@@ -77,6 +78,9 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     redirect: "/questions",
+    meta: {
+      hideInMenu: true,
+    },
   },
   // {
   //   path: "/hide",

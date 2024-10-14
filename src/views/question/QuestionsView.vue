@@ -1,11 +1,16 @@
 <template>
   <div id="questionsView">
-    <a-form :model="searchParams" layout="inline" v-if="false">
+    <a-form :model="searchParams" layout="inline">
       <a-form-item field="title" label="名称" style="min-width: 240px">
         <a-input v-model="searchParams.title" placeholder="请输入名称" />
       </a-form-item>
       <a-form-item field="tags" label="标签" style="min-width: 240px">
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签" />
+        <a-select
+          v-model="searchParams.tags"
+          placeholder="请输入标签"
+          multiple
+          allow-create
+        />
       </a-form-item>
       <a-form-item>
         <a-button type="primary" @click="doSubmit">提交</a-button>
@@ -74,7 +79,7 @@ const total = ref(0);
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
   tags: [],
-  pageSize: 2,
+  pageSize: 20,
   current: 1,
 });
 
