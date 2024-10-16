@@ -5,12 +5,17 @@ import checkAccess from "@/access/checkAccess";
 
 router.beforeEach(async (to, from, next) => {
   console.log("登陆用户信息", store.state.user.loginUser);
+  console.log("okok")
   let loginUser = store.state.user.loginUser;
   // // 如果之前没登陆过，自动登录
   if (!loginUser || !loginUser.userRole) {
     // 加 await 是为了等用户登录成功之后，再执行后续的代码
+    console.log("自动登录");
     await store.dispatch("user/getLoginUser");
+
     loginUser = store.state.user.loginUser;
+  } else {
+    console.log("已经登陆过了");
   }
   const needAccess = (to.meta?.access as string) ?? ACCESS_ENUM.NOT_LOGIN;
   // 要跳转的页面必须要登陆
@@ -21,6 +26,7 @@ router.beforeEach(async (to, from, next) => {
       !loginUser.userRole ||
       loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
     ) {
+      console.log("跳转到登陆");
       next(`/user/login?redirect=${to.fullPath}`);
       return;
     }
