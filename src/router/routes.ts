@@ -1,18 +1,17 @@
 import { RouteRecordRaw } from "vue-router";
 import HomeView from "@/views/ExampleView.vue";
-// import UserLayout from "@/layouts/UserLayout.vue";
-// import UserLoginView from "@/views/user/UserLoginView.vue";
-// import UserRegisterView from "@/views/user/UserRegisterView.vue";
-// import AdminView from "@/views/AdminView.vue";
-// import NoAuthView from "@/views/NoAuthView.vue";
+import UserLayout from "@/layouts/UserLayout.vue";
+import UserLoginView from "@/views/user/UserLoginView.vue";
+import UserRegisterView from "@/views/user/UserRegisterView.vue";
+import AdminView from "@/views/AdminView.vue";
+import NoAuthView from "@/views/NoAuthView.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import QuestionsView from "@/views/question/QuestionsView.vue";
+import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
-import UserLoginView from "@/views/user/UserLoginView.vue";
-import UserLayout from "@/layouts/UserLayout.vue";
-import UserRegisterView from "@/views/user/UserRegisterView.vue";
+
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/user",
@@ -40,6 +39,11 @@ export const routes: Array<RouteRecordRaw> = [
     component: QuestionsView,
   },
   {
+    path: "/question_submit",
+    name: "浏览题目提交",
+    component: QuestionSubmitView,
+  },
+  {
     path: "/view/question/:id",
     name: "在线做题",
     component: ViewQuestionView,
@@ -55,7 +59,6 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.USER,
-      // access: ACCESS_ENUM.ADMIN,
     },
   },
   {
@@ -77,10 +80,8 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    redirect: "/questions",
-    meta: {
-      hideInMenu: true,
-    },
+    name: "主页",
+    component: QuestionsView,
   },
   // {
   //   path: "/hide",
@@ -90,14 +91,14 @@ export const routes: Array<RouteRecordRaw> = [
   //     hideInMenu: true,
   //   },
   // },
-  // {
-  //   path: "/noAuth",
-  //   name: "无权限",
-  //   component: NoAuthView,
-  //   meta: {
-  //     hideInMenu: true,
-  //   },
-  // },
+  {
+    path: "/noAuth",
+    name: "无权限",
+    component: NoAuthView,
+    meta: {
+      hideInMenu: true,
+    },
+  },
   // {
   //   path: "/admin",
   //   name: "管理员可见",
