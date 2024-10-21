@@ -26,7 +26,8 @@
                     v-for="(tag, index) of question.tags"
                     :key="index"
                     color="green"
-                    >{{ tag }}
+                  >
+                    {{ tag }}
                   </a-tag>
                 </a-space>
               </template>
@@ -64,13 +65,28 @@
         <a-button type="primary" style="min-width: 200px" @click="doSubmit">
           提交代码
         </a-button>
+
+        <!-- 使用与历史记录一致的表格逻辑展示最新提交记录 -->
+        <a-table
+          v-if="latestSubmission"
+          :columns="columns"
+          :data="[latestSubmission]"
+          :pagination="false"
+          class="mt-4"
+        >
+          <template #judgeInfo="{ record }">
+            {{ JSON.stringify(record.judgeInfo) }}
+          </template>
+          <template #createTime="{ record }">
+            {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </a-table>
       </a-col>
     </a-row>
   </div>
 </template>
-
 <script setup lang="ts">
-import { onMounted, ref, watchEffect, withDefaults, defineProps } from "vue";
+import { onMounted, ref, defineProps, withDefaults } from "vue";
 import {
   Question,
   QuestionControllerService,
@@ -81,6 +97,7 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
+import moment from "moment";
 
 interface Props {
   id: string;
@@ -91,7 +108,16 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const question = ref<QuestionVO>();
+const latestSubmission = ref<any>(null); // 用于存储最新提交记录
 
+const form = ref<QuestionSubmitAddRequest>({
+  language: "java",
+  code: "",
+});
+
+/**
+ * 加载题目数据
+ */
 const loadData = async () => {
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
     props.id as any
@@ -103,13 +129,8 @@ const loadData = async () => {
   }
 };
 
-const form = ref<QuestionSubmitAddRequest>({
-  language: "java",
-  code: "",
-});
-
 /**
- * 提交代码
+ * 提交代码并获取最新提交记录
  */
 const doSubmit = async () => {
   if (!question.value?.id) {
@@ -122,33 +143,76 @@ const doSubmit = async () => {
   });
   if (res.code === 0) {
     message.success("提交成功");
+    fetchLatestSubmission();
   } else {
     message.error("提交失败," + res.message);
   }
 };
 
 /**
- * 页面加载时，请求数据
+ * 获取最新的提交记录
+ */
+const fetchLatestSubmission = async () => {
+  try {
+    const res =
+      await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
+        current: 1,
+        pageSize: 1,
+        sortField: "createTime",
+        sortOrder: "descend",
+      });
+    const pageData = res.data;
+
+    console.log("最新提交记录:", pageData.records[0]); // 打印最新提交记录
+
+    latestSubmission.value = pageData.records[0];
+  } catch (error) {
+    message.error("获取最新提交记录失败");
+    console.error(error);
+  }
+};
+
+/**
+ * 页面加载时请求题目数据
  */
 onMounted(() => {
   loadData();
-  // question.value = {
-  //   acceptedNum: 2,
-  //   content: "What is the sum of two numbers????",
-  //   favourNum: 11,
-  //   id: props.id,
-  //   tags: ["二叉树"],
-  //   thumbNum: 22,
-  //   title: "A+B",
-  //   judgeConfig: {},
-  // };
 });
+
+/**
+ * 表格列配置，与历史记录的逻辑保持一致
+ */
+const columns = [
+  {
+    title: "提交号",
+    dataIndex: "id",
+  },
+  {
+    title: "编程语言",
+    dataIndex: "language",
+  },
+  {
+    title: "判题状态",
+    dataIndex: "status",
+  },
+  {
+    title: "题目 id",
+    dataIndex: "questionId",
+  },
+  {
+    title: "提交者 id",
+    dataIndex: "userId",
+  },
+  {
+    title: "创建时间",
+    slotName: "createTime",
+  },
+];
 
 const changeCode = (value: string) => {
   form.value.code = value;
 };
 </script>
-
 <style>
 #viewQuestionView {
   max-width: 1400px;
@@ -157,5 +221,9 @@ const changeCode = (value: string) => {
 
 #viewQuestionView .arco-space-horizontal .arco-space-item {
   margin-bottom: 0 !important;
+}
+
+.mt-4 {
+  margin-top: 16px;
 }
 </style>
