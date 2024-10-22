@@ -1,8 +1,10 @@
 <template>
   <div id="viewQuestionView">
     <a-row :gutter="[24, 24]">
+      <!-- 左侧：题目详情（左上）和提交结果表格（左下） -->
       <a-col :md="12" :xs="24">
-        <a-tabs default-active-key="question">
+        <!-- 题目详情部分 -->
+        <a-tabs default-active-key="question" class="mb-4">
           <a-tab-pane key="question" title="题目">
             <a-card v-if="question" :title="question.title">
               <a-descriptions
@@ -33,12 +35,31 @@
               </template>
             </a-card>
           </a-tab-pane>
-          <a-tab-pane key="comment" title="评论" disabled> 评论区</a-tab-pane>
-          <a-tab-pane key="answer" title="答案"> 暂时无法查看答案</a-tab-pane>
         </a-tabs>
+
+        <!-- 提交结果表格部分 -->
+        <a-table
+          v-if="latestSubmission"
+          :columns="columns"
+          :data="[latestSubmission]"
+          :pagination="false"
+          class="mt-4"
+        >
+          <template #judgeInfo="{ record }">
+            {{ JSON.stringify(record.judgeInfo) }}
+          </template>
+          <template #createTime="{ record }">
+            {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+          <template #status="{ record }">
+            {{ formatStatus(record.status) }}
+          </template>
+        </a-table>
       </a-col>
+
+      <!-- 右侧：代码编辑器和提交按钮 -->
       <a-col :md="12" :xs="24">
-        <a-form :model="form" layout="inline">
+        <a-form :model="form" layout="inline" class="mb-4">
           <a-form-item
             field="language"
             label="编程语言"
@@ -56,35 +77,22 @@
             </a-select>
           </a-form-item>
         </a-form>
+
         <CodeEditor
           :value="form.code as string"
           :language="form.language"
           :handle-change="changeCode"
         />
+
         <a-divider :size="0" />
         <a-button type="primary" style="min-width: 200px" @click="doSubmit">
           提交代码
         </a-button>
-
-        <!-- 使用与历史记录一致的表格逻辑展示最新提交记录 -->
-        <a-table
-          v-if="latestSubmission"
-          :columns="columns"
-          :data="[latestSubmission]"
-          :pagination="false"
-          class="mt-4"
-        >
-          <template #judgeInfo="{ record }">
-            {{ JSON.stringify(record.judgeInfo) }}
-          </template>
-          <template #createTime="{ record }">
-            {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
-          </template>
-        </a-table>
       </a-col>
     </a-row>
   </div>
 </template>
+
 <script setup lang="ts">
 import { onMounted, ref, defineProps, withDefaults } from "vue";
 import {
@@ -107,8 +115,19 @@ const props = withDefaults(defineProps<Props>(), {
   id: () => "",
 });
 
+const formatStatus = (status: number | string) => {
+  const statusMap: { [key: string]: string } = {
+    "0": "待评测",
+    "1": "评测中",
+    "2": "评测通过",
+    "3": "评测失败",
+  };
+  return statusMap[status] || "未知状态";
+};
+
 const question = ref<QuestionVO>();
 const latestSubmission = ref<any>(null); // 用于存储最新提交记录
+const pollingInterval = ref<number | null>(null); // 存储轮询的 interval ID
 
 const form = ref<QuestionSubmitAddRequest>({
   language: "java",
@@ -130,7 +149,7 @@ const loadData = async () => {
 };
 
 /**
- * 提交代码并获取最新提交记录
+ * 提交代码并开始轮询
  */
 const doSubmit = async () => {
   if (!question.value?.id) {
@@ -142,10 +161,34 @@ const doSubmit = async () => {
     questionId: question.value.id,
   });
   if (res.code === 0) {
-    message.success("提交成功");
-    fetchLatestSubmission();
+    message.success("提交成功，开始获取评测结果...");
+    startPolling(); // 提交成功后启动轮询
   } else {
     message.error("提交失败," + res.message);
+  }
+};
+
+/**
+ * 启动轮询获取最新的提交记录
+ */
+const startPolling = () => {
+  pollingInterval.value = setInterval(async () => {
+    const res = await fetchLatestSubmission();
+    if (res && res.status !== 1) {
+      // 如果状态不再是“评测中”，停止轮询
+      stopPolling();
+      message.success(`判题完成：${formatStatus(res.status)}`);
+    }
+  }, 3000); // 每3秒轮询一次
+};
+
+/**
+ * 停止轮询
+ */
+const stopPolling = () => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+    pollingInterval.value = null;
   }
 };
 
@@ -160,15 +203,17 @@ const fetchLatestSubmission = async () => {
         pageSize: 1,
         sortField: "createTime",
         sortOrder: "descend",
+        timestamp: new Date().getTime(),
       });
     const pageData = res.data;
 
-    console.log("最新提交记录:", pageData.records[0]); // 打印最新提交记录
-
-    latestSubmission.value = pageData.records[0];
+    latestSubmission.value = pageData.records[0]; // 更新最新提交记录
+    console.log("最新提交记录:", latestSubmission.value);
+    return latestSubmission.value;
   } catch (error) {
     message.error("获取最新提交记录失败");
     console.error(error);
+    return null;
   }
 };
 
@@ -192,16 +237,12 @@ const columns = [
     dataIndex: "language",
   },
   {
+    title: "判题信息",
+    slotName: "judgeInfo",
+  },
+  {
     title: "判题状态",
     dataIndex: "status",
-  },
-  {
-    title: "题目 id",
-    dataIndex: "questionId",
-  },
-  {
-    title: "提交者 id",
-    dataIndex: "userId",
   },
   {
     title: "创建时间",
