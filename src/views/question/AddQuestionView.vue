@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-alert("为方便测试，现在已登录的用户也显示创建题目功能");
+// alert("为方便测试，现在已登录的用户也显示创建题目功能");
 
 import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
