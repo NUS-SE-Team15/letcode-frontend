@@ -1,14 +1,21 @@
 <template>
   <div id="questionSubmitView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="questionId" label="题号" style="min-width: 240px">
-        <a-input v-model="searchParams.questionId" placeholder="请输入" />
+      <a-form-item
+        field="questionId"
+        label="QuestionId"
+        style="min-width: 240px"
+      >
+        <a-input
+          v-model="searchParams.questionId"
+          placeholder="Please enter a questionId"
+        />
       </a-form-item>
-      <a-form-item field="language" label="编程语言" style="min-width: 240px">
+      <a-form-item field="language" label="Language" style="min-width: 240px">
         <a-select
           v-model="searchParams.language"
           :style="{ width: '320px' }"
-          placeholder="选择编程语言"
+          placeholder="Choose a programming language"
         >
           <a-option>java</a-option>
           <a-option>cpp</a-option>
@@ -17,7 +24,7 @@
         </a-select>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" @click="doSubmit">搜索</a-button>
+        <a-button type="primary" @click="doSubmit">Search</a-button>
       </a-form-item>
     </a-form>
     <a-divider size="0" />
@@ -77,7 +84,7 @@ const loadData = async () => {
     dataList.value = res.data.records;
     total.value = res.data.total;
   } else {
-    message.error("加载失败，" + res.message);
+    message.error("Fail to load" + res.message);
   }
 };
 
@@ -97,31 +104,31 @@ onMounted(() => {
 
 const columns = [
   {
-    title: "提交号",
+    title: "SubmitId",
     dataIndex: "id",
   },
   {
-    title: "编程语言",
+    title: "Language",
     dataIndex: "language",
   },
   {
-    title: "判题信息",
+    title: "JudgeInfo",
     slotName: "judgeInfo",
   },
   {
-    title: "判题状态",
+    title: "Status",
     dataIndex: "status",
   },
   {
-    title: "题目 id",
+    title: "QuestionId",
     dataIndex: "questionId",
   },
   {
-    title: "提交者 id",
+    title: "UserId",
     dataIndex: "userId",
   },
   {
-    title: "创建时间",
+    title: "CreateTime",
     slotName: "createTime",
   },
 ];
