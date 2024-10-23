@@ -1,4 +1,4 @@
-/* generated using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -11,7 +11,6 @@ export type { BaseResponse_boolean_ } from "./models/BaseResponse_boolean_";
 export type { BaseResponse_int_ } from "./models/BaseResponse_int_";
 export type { BaseResponse_LoginUserVO_ } from "./models/BaseResponse_LoginUserVO_";
 export type { BaseResponse_long_ } from "./models/BaseResponse_long_";
-export type { BaseResponse_Page_Post_ } from "./models/BaseResponse_Page_Post_";
 export type { BaseResponse_Page_PostVO_ } from "./models/BaseResponse_Page_PostVO_";
 export type { BaseResponse_Page_Question_ } from "./models/BaseResponse_Page_Question_";
 export type { BaseResponse_Page_QuestionSubmitVO_ } from "./models/BaseResponse_Page_QuestionSubmitVO_";
@@ -30,14 +29,12 @@ export type { JudgeConfig } from "./models/JudgeConfig";
 export type { JudgeInfo } from "./models/JudgeInfo";
 export type { LoginUserVO } from "./models/LoginUserVO";
 export type { OrderItem } from "./models/OrderItem";
-export type { Page_Post_ } from "./models/Page_Post_";
 export type { Page_PostVO_ } from "./models/Page_PostVO_";
 export type { Page_Question_ } from "./models/Page_Question_";
 export type { Page_QuestionSubmitVO_ } from "./models/Page_QuestionSubmitVO_";
 export type { Page_QuestionVO_ } from "./models/Page_QuestionVO_";
 export type { Page_User_ } from "./models/Page_User_";
 export type { Page_UserVO_ } from "./models/Page_UserVO_";
-export type { Post } from "./models/Post";
 export type { PostAddRequest } from "./models/PostAddRequest";
 export type { PostEditRequest } from "./models/PostEditRequest";
 export type { PostFavourAddRequest } from "./models/PostFavourAddRequest";
@@ -65,10 +62,10 @@ export type { UserUpdateRequest } from "./models/UserUpdateRequest";
 export type { UserVO } from "./models/UserVO";
 
 export { FileControllerService } from "./services/FileControllerService";
-export { HealthCheckControllerService } from "./services/HealthCheckControllerService";
 export { PostControllerService } from "./services/PostControllerService";
 export { PostFavourControllerService } from "./services/PostFavourControllerService";
 export { PostThumbControllerService } from "./services/PostThumbControllerService";
 export { QuestionControllerService } from "./services/QuestionControllerService";
+export { QuestionSubmitControllerService } from "./services/QuestionSubmitControllerService";
 export { UserControllerService } from "./services/UserControllerService";
 export { WxMpControllerService } from "./services/WxMpControllerService";
