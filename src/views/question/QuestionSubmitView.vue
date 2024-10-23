@@ -48,7 +48,6 @@ import { onMounted, ref, watchEffect } from "vue";
 import {
   Question,
   QuestionControllerService,
-  QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
@@ -67,12 +66,13 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
 });
 
 const loadData = async () => {
-  const res =
-    await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
+  const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
+    {
       ...searchParams.value,
       sortField: "createTime",
       sortOrder: "descend",
-    });
+    }
+  );
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = res.data.total;
