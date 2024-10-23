@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Post = {
-    content?: string;
+export type QuestionSubmit = {
+    code?: string;
     createTime?: string;
-    favourNum?: number;
     id?: number;
     isDelete?: number;
-    tags?: string;
-    thumbNum?: number;
-    title?: string;
+    judgeInfo?: string;
+    language?: string;
+    questionId?: number;
+    status?: number;
     updateTime?: string;
     userId?: number;
 };
