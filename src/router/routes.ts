@@ -83,7 +83,7 @@ export const routes: Array<RouteRecordRaw> = [
    */
   {
     path: "/",
-    name: "主页",
+    name: "Homepage",
     redirect: "/questions",
     // component: QuestionsView,
     meta: {
