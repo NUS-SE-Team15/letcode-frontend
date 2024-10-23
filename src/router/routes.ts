@@ -58,7 +58,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "Create Questions",
     component: AddQuestionView,
     meta: {
-      access: ACCESS_ENUM.USER,
+      access: ACCESS_ENUM.ADMIN,
     },
   },
   {
@@ -66,7 +66,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "Update Questions",
     component: AddQuestionView,
     meta: {
-      access: ACCESS_ENUM.USER,
+      access: ACCESS_ENUM.ADMIN,
       hideInMenu: true,
     },
   },
@@ -78,10 +78,17 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.ADMIN,
     },
   },
+  /*
+  todo: '/'可以放在导航栏作主页,也可以直接重定向,redirect和component只能留一个
+   */
   {
     path: "/",
-    name: "Homepage",
-    component: QuestionsView,
+    name: "主页",
+    redirect: "/questions",
+    // component: QuestionsView,
+    meta: {
+      hideInMenu: true,
+    },
   },
   // {
   //   path: "/hide",

@@ -108,9 +108,11 @@
 </template>
 
 <script setup lang="ts">
+/*
 alert(
   "For ease of testing, now logged in users are also shown the ability to create questions"
 );
+ */
 
 import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
