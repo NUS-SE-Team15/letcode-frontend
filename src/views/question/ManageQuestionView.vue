@@ -14,8 +14,8 @@
     >
       <template #optional="{ record }">
         <a-space>
-          <a-button type="primary" @click="doUpdate(record)"> 修改</a-button>
-          <a-button status="danger" @click="doDelete(record)">删除</a-button>
+          <a-button type="primary" @click="doUpdate(record)">Update</a-button>
+          <a-button status="danger" @click="doDelete(record)">Delete</a-button>
         </a-space>
       </template>
     </a-table>
@@ -50,7 +50,7 @@ const loadData = async () => {
     dataList.value = res.data.records;
     total.value = res.data.total;
   } else {
-    message.error("加载失败，" + res.message);
+    message.error("Fail to load " + res.message);
   }
 };
 
@@ -76,47 +76,47 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "标题",
+    title: "Title",
     dataIndex: "title",
   },
   {
-    title: "内容",
+    title: "Content",
     dataIndex: "content",
   },
   {
-    title: "标签",
+    title: "Tags",
     dataIndex: "tags",
   },
   {
-    title: "答案",
+    title: "Answer",
     dataIndex: "answer",
   },
   {
-    title: "提交数",
+    title: "SubmitNum",
     dataIndex: "submitNum",
   },
   {
-    title: "通过数",
+    title: "AcceptedNum",
     dataIndex: "acceptedNum",
   },
   {
-    title: "判题配置",
+    title: "JudgeConfig",
     dataIndex: "judgeConfig",
   },
   {
-    title: "判题用例",
+    title: "JudgeCase",
     dataIndex: "judgeCase",
   },
   {
-    title: "用户id",
+    title: "UserId",
     dataIndex: "userId",
   },
   {
-    title: "创建时间",
+    title: "CreateTime",
     dataIndex: "createTime",
   },
   {
-    title: "操作",
+    title: "Optional",
     slotName: "optional",
   },
 ];
@@ -133,10 +133,10 @@ const doDelete = async (question: Question) => {
     id: question.id,
   });
   if (res.code === 0) {
-    message.success("删除成功");
+    message.success("Delete Successfully!");
     loadData();
   } else {
-    message.error("删除失败");
+    message.error("Delete failed.");
   }
 };
 

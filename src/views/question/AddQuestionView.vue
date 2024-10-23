@@ -1,49 +1,53 @@
 <template>
   <div id="addQuestionView">
-    <h2>创建题目</h2>
+    <h2>Create question</h2>
     <a-form :model="form" label-align="left">
-      <a-form-item field="title" label="标题">
-        <a-input v-model="form.title" placeholder="请输入标题" />
+      <a-form-item field="title" label="Title">
+        <a-input v-model="form.title" placeholder="Please enter a title" />
       </a-form-item>
-      <a-form-item field="tags" label="标签">
+      <a-form-item field="tags" label="Tags">
         <a-select
           v-model="form.tags"
-          placeholder="请输入标签"
+          placeholder="Please enter a tags"
           allow-clear
           allow-create
           multiple
         />
       </a-form-item>
-      <a-form-item field="content" label="题目内容">
+      <a-form-item field="content" label="Content">
         <MdEditor :value="form.content" :handle-change="onContentChange" />
       </a-form-item>
-      <a-form-item field="answer" label="答案">
+      <a-form-item field="answer" label="Answer">
         <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
       </a-form-item>
-      <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
+      <a-form-item
+        label="Judge Config"
+        :content-flex="false"
+        :merge-props="false"
+      >
         <a-space direction="vertical" style="min-width: 480px">
-          <a-form-item field="judgeConfig.timeLimit" label="时间限制">
+          <a-form-item field="judgeConfig.timeLimit" label="Time Limit">
             <a-input-number
               v-model="form.judgeConfig.timeLimit"
-              placeholder="请输入时间限制"
+              placeholder="Please enter a time limit"
               mode="button"
               :min="0"
               size="large"
             />
           </a-form-item>
-          <a-form-item field="judgeConfig.memoryLimit" label="内存限制">
+          <a-form-item field="judgeConfig.memoryLimit" label="Memory Limit">
             <a-input-number
               v-model="form.judgeConfig.memoryLimit"
-              placeholder="请输入内存限制"
+              placeholder="Please enter a memory limit"
               mode="button"
               :min="0"
               size="large"
             />
           </a-form-item>
-          <a-form-item field="judgeConfig.stackLimit" label="堆栈限制">
+          <a-form-item field="judgeConfig.stackLimit" label="Stack constraint">
             <a-input-number
               v-model="form.judgeConfig.stackLimit"
-              placeholder="请输入堆栈限制"
+              placeholder="Please enter a Stack constraint"
               mode="button"
               :min="0"
               size="large"
@@ -52,7 +56,7 @@
         </a-space>
       </a-form-item>
       <a-form-item
-        label="测试用例配置"
+        label="Test case configuration"
         :content-flex="false"
         :merge-props="false"
       >
@@ -64,39 +68,39 @@
           <a-space direction="vertical" style="min-width: 640px">
             <a-form-item
               :field="`form.judgeCase[${index}].input`"
-              :label="`输入用例-${index}`"
+              :label="`Input case-${index}`"
               :key="index"
             >
               <a-input
                 v-model="judgeCaseItem.input"
-                placeholder="请输入测试输入用例"
+                placeholder="Please enter a test input case"
               />
             </a-form-item>
             <a-form-item
               :field="`form.judgeCase[${index}].output`"
-              :label="`输出用例-${index}`"
+              :label="`Output case-${index}`"
               :key="index"
             >
               <a-input
                 v-model="judgeCaseItem.output"
-                placeholder="请输入测试输出用例"
+                placeholder="Please enter a test output case"
               />
             </a-form-item>
             <a-button status="danger" @click="handleDelete(index)">
-              删除
+              delete
             </a-button>
           </a-space>
         </a-form-item>
         <div style="margin-top: 32px">
           <a-button @click="handleAdd" type="outline" status="success"
-            >新增测试用例
+            >Added test cases
           </a-button>
         </div>
       </a-form-item>
       <div style="margin-top: 16px" />
       <a-form-item>
         <a-button type="primary" style="min-width: 200px" @click="doSubmit"
-          >提交
+          >Submit
         </a-button>
       </a-form-item>
     </a-form>
@@ -104,7 +108,9 @@
 </template>
 
 <script setup lang="ts">
-alert("为方便测试，现在已登录的用户也显示创建题目功能");
+alert(
+  "For ease of testing, now logged in users are also shown the ability to create questions"
+);
 
 import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
@@ -174,7 +180,7 @@ const loadData = async () => {
       form.value.tags = JSON.parse(form.value.tags as any);
     }
   } else {
-    message.error("加载失败，" + res.message);
+    message.error("fail to load, " + res.message);
   }
 };
 
@@ -190,24 +196,24 @@ const doSubmit = async () => {
       form.value
     );
     if (res.code === 0) {
-      message.success("更新成功");
+      message.success("Update successfully!");
       setTimeout(() => {
         router.replace("/manage/question");
       }, 1500);
     } else {
-      message.error("更新失败，" + res.message);
+      message.error("Update failed, " + res.message);
     }
   } else {
     const res = await QuestionControllerService.addQuestionUsingPost(
       form.value
     );
     if (res.code === 0) {
-      message.success("创建成功");
+      message.success("Created successfully!");
       setTimeout(() => {
         router.replace("/questions");
       }, 1500);
     } else {
-      message.error("创建失败，" + res.message);
+      message.error("Creation failed, " + res.message);
     }
   }
 };
