@@ -1,6 +1,6 @@
 <template>
   <div id="userRegisterView">
-    <h2 style="margin-bottom: 16px">用户注册</h2>
+    <h2 style="margin-bottom: 16px">Register</h2>
     <a-form
       style="max-width: 480px; margin: 0 auto"
       label-align="left"
@@ -8,23 +8,30 @@
       :model="form"
       @submit="handleSubmit"
     >
-      <a-form-item field="userAccount" label="账号">
-        <a-input v-model="form.userAccount" placeholder="请输入账号" />
+      <a-form-item field="userAccount" label="Account">
+        <a-input
+          v-model="form.userAccount"
+          placeholder="Please enter your account"
+        />
       </a-form-item>
-      <a-form-item field="userPassword" tooltip="密码不少于 8 位" label="密码">
+      <a-form-item
+        field="userPassword"
+        tooltip="Password must be at least 8 characters"
+        label="Password"
+      >
         <a-input-password
           v-model="form.userPassword"
-          placeholder="请输入密码"
+          placeholder="Please enter a password"
         />
       </a-form-item>
       <a-form-item
         field="checkPassword"
-        tooltip="再次输入密码"
-        label="确认密码"
+        tooltip="Reenter password"
+        label="Confirm password"
       >
         <a-input-password
           v-model="form.checkPassword"
-          placeholder="请再次输入密码"
+          placeholder="Please enter your password again"
         />
       </a-form-item>
       <a-form-item>
@@ -58,19 +65,19 @@ const router = useRouter();
  */
 const handleSubmit = async () => {
   if (form.userPassword !== form.checkPassword) {
-    message.error("两次密码输入不一致");
+    message.error("The two password entries are inconsistent\n");
     return;
   }
   const res = await UserControllerService.userRegisterUsingPost(form);
   // 注册成功，跳转到登录页面
   if (res.code === 0) {
-    message.success("注册成功，请登录");
+    message.success("Registration successful, please login");
     router.push({
       path: "/user/login",
       replace: true,
     });
   } else {
-    message.error("注册失败，" + res.message);
+    message.error("Fail to register, " + res.message);
   }
 };
 </script>

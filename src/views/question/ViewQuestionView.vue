@@ -5,19 +5,19 @@
       <a-col :md="12" :xs="24">
         <!-- 题目详情部分 -->
         <a-tabs default-active-key="question" class="mb-4">
-          <a-tab-pane key="question" title="题目">
+          <a-tab-pane key="question" title="Question">
             <a-card v-if="question" :title="question.title">
               <a-descriptions
-                title="判题条件"
+                title="JudgeCondition"
                 :column="{ xs: 1, md: 2, lg: 3 }"
               >
-                <a-descriptions-item label="时间限制">
+                <a-descriptions-item label="Time Limit">
                   {{ question.judgeConfig.timeLimit ?? 0 }}
                 </a-descriptions-item>
-                <a-descriptions-item label="内存限制">
+                <a-descriptions-item label="Memory Limit">
                   {{ question.judgeConfig.memoryLimit ?? 0 }}
                 </a-descriptions-item>
-                <a-descriptions-item label="堆栈限制">
+                <a-descriptions-item label="Stack Limit">
                   {{ question.judgeConfig.stackLimit ?? 0 }}
                 </a-descriptions-item>
               </a-descriptions>
@@ -62,13 +62,13 @@
         <a-form :model="form" layout="inline" class="mb-4">
           <a-form-item
             field="language"
-            label="编程语言"
+            label="Language"
             style="min-width: 240px"
           >
             <a-select
               v-model="form.language"
               :style="{ width: '320px' }"
-              placeholder="选择编程语言"
+              placeholder="Choose a programming language"
             >
               <a-option>java</a-option>
               <a-option>cpp</a-option>
@@ -86,7 +86,7 @@
 
         <a-divider :size="0" />
         <a-button type="primary" style="min-width: 200px" @click="doSubmit">
-          提交代码
+          Submit
         </a-button>
       </a-col>
     </a-row>
@@ -116,12 +116,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const formatStatus = (status: number | string) => {
   const statusMap: { [key: string]: string } = {
-    "0": "待评测",
-    "1": "评测中",
-    "2": "评测通过",
-    "3": "评测失败",
+    "0": "Pending evaluation ",
+    "1": "Evaluating ",
+    "2": "Evaluation passed ",
+    "3": "Evaluation failed ",
   };
-  return statusMap[status] || "未知状态";
+  return statusMap[status] || "Unknown state";
 };
 
 const question = ref<QuestionVO>();
@@ -143,7 +143,7 @@ const loadData = async () => {
   if (res.code === 0) {
     question.value = res.data;
   } else {
-    message.error("加载失败，" + res.message);
+    message.error("Fail to load, " + res.message);
   }
 };
 
@@ -160,10 +160,12 @@ const doSubmit = async () => {
     questionId: question.value.id,
   });
   if (res.code === 0) {
-    message.success("提交成功，开始获取评测结果...");
+    message.success(
+      "Submitted successfully, start getting evaluation results..."
+    );
     startPolling(); // 提交成功后启动轮询
   } else {
-    message.error("提交失败," + res.message);
+    message.error("Submit failed, " + res.message);
   }
 };
 
@@ -176,7 +178,7 @@ const startPolling = () => {
     if (res && res.status !== 1) {
       // 如果状态不再是“评测中”，停止轮询
       stopPolling();
-      message.success(`判题完成：${formatStatus(res.status)}`);
+      message.success(`Judgment completed: ${formatStatus(res.status)}`);
     }
   }, 3000); // 每3秒轮询一次
 };
@@ -207,10 +209,10 @@ const fetchLatestSubmission = async () => {
     const pageData = res.data;
 
     latestSubmission.value = pageData.records[0]; // 更新最新提交记录
-    console.log("最新提交记录:", latestSubmission.value);
+    console.log("Latest submission record: ", latestSubmission.value);
     return latestSubmission.value;
   } catch (error) {
-    message.error("获取最新提交记录失败");
+    message.error("Failed to obtain the latest submission record.");
     console.error(error);
     return null;
   }
@@ -228,23 +230,23 @@ onMounted(() => {
  */
 const columns = [
   {
-    title: "提交号",
+    title: "SubmitId",
     dataIndex: "id",
   },
   {
-    title: "编程语言",
+    title: "Language",
     dataIndex: "language",
   },
   {
-    title: "判题信息",
+    title: "JudgeInfo",
     slotName: "judgeInfo",
   },
   {
-    title: "判题状态",
+    title: "Status",
     dataIndex: "status",
   },
   {
-    title: "创建时间",
+    title: "CreateTime",
     slotName: "createTime",
   },
 ];

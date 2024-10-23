@@ -15,17 +15,17 @@ import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/user",
-    name: "用户",
+    name: "User",
     component: UserLayout,
     children: [
       {
         path: "/user/login",
-        name: "用户登录",
+        name: "User Login",
         component: UserLoginView,
       },
       {
         path: "/user/register",
-        name: "用户注册",
+        name: "User Register",
         component: UserRegisterView,
       },
     ],
@@ -35,17 +35,17 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/questions",
-    name: "浏览题目",
+    name: "All Questions",
     component: QuestionsView,
   },
   {
     path: "/question_submit",
-    name: "浏览题目提交",
+    name: "Submit History",
     component: QuestionSubmitView,
   },
   {
     path: "/view/question/:id",
-    name: "在线做题",
+    name: "Online Question",
     component: ViewQuestionView,
     props: true,
     meta: {
@@ -55,7 +55,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/add/question",
-    name: "创建题目",
+    name: "Create Questions",
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.USER,
@@ -63,7 +63,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/update/question",
-    name: "更新题目",
+    name: "Update Questions",
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.USER,
@@ -72,7 +72,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/manage/question/",
-    name: "管理题目",
+    name: "Manage Questions",
     component: ManageQuestionView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
@@ -80,7 +80,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    name: "主页",
+    name: "Homepage",
     component: QuestionsView,
   },
   // {
@@ -93,7 +93,7 @@ export const routes: Array<RouteRecordRaw> = [
   // },
   {
     path: "/noAuth",
-    name: "无权限",
+    name: "NoAuth",
     component: NoAuthView,
     meta: {
       hideInMenu: true,

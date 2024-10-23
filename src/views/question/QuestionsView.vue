@@ -1,19 +1,22 @@
 <template>
   <div id="questionsView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="名称" style="min-width: 240px">
-        <a-input v-model="searchParams.title" placeholder="请输入名称" />
+      <a-form-item field="title" label="Title" style="min-width: 240px">
+        <a-input
+          v-model="searchParams.title"
+          placeholder="Please enter a title"
+        />
       </a-form-item>
-      <a-form-item field="tags" label="标签" style="min-width: 240px">
+      <a-form-item field="tags" label="Tags" style="min-width: 240px">
         <a-select
           v-model="searchParams.tags"
-          placeholder="请输入标签"
+          placeholder="Please enter a tags"
           multiple
           allow-create
         />
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" @click="doSubmit">提交</a-button>
+        <a-button type="primary" @click="doSubmit">Search</a-button>
       </a-form-item>
     </a-form>
     <a-divider :size="0" />
@@ -51,7 +54,7 @@
       <template #optional="{ record }">
         <a-space>
           <a-button type="primary" @click="toQuestionPage(record)">
-            做题
+            Solve
           </a-button>
         </a-space>
       </template>
@@ -91,7 +94,7 @@ const loadData = async () => {
     dataList.value = res.data.records;
     total.value = Number(res.data.total);
   } else {
-    message.error("加载失败，" + res.message);
+    message.error("Fail to load, " + res.message);
   }
 };
 
@@ -122,23 +125,23 @@ onMounted(() => {
 
 const columns = [
   {
-    title: "题号",
+    title: "Id",
     dataIndex: "id",
   },
   {
-    title: "题目名称",
+    title: "Title",
     dataIndex: "title",
   },
   {
-    title: "标签",
+    title: "Tags",
     slotName: "tags",
   },
   {
-    title: "通过率",
+    title: "AcceptedRate",
     slotName: "acceptedRate",
   },
   {
-    title: "创建时间",
+    title: "CreateTime",
     slotName: "createTime",
   },
   {
