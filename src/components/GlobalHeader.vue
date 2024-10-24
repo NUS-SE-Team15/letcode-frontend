@@ -42,16 +42,15 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 
-const curUsername = ref("Please Login");
+const curUsername = computed(() => {
+  if (isLogin.value)
+    return store.state.user.loginUser.userAccount ?? "Please Login";
+  return "Please Login";
+});
 
-watch(
-  store.state.user,
-  () => {
-    curUsername.value =
-      store.state.user?.loginUser?.userAccount ?? "Please Login";
-  },
-  { deep: true }
-);
+const isLogin = computed(() => {
+  return store.state.user?.loginUser?.userRole !== "notLogin";
+});
 
 // 展示在菜单的路由数组
 const visibleRoutes = computed(() => {
@@ -77,7 +76,7 @@ router.afterEach((to, from, failure) => {
 
 setTimeout(async () => {
   await store.dispatch("user/getLoginUser");
-  if (store.state.user?.loginUser?.userAccount && route.path == "/user/login") {
+  if (isLogin.value && route.path == "/user/login") {
     message.success("Already Login!");
     router.replace("/");
   }
@@ -90,7 +89,7 @@ const doMenuClick = (key: string) => {
 };
 
 const goLoginout = () => {
-  if (store.state.user?.loginUser?.userAccount) {
+  if (isLogin.value) {
     logout();
     return;
   }
@@ -102,7 +101,6 @@ const logout = async () => {
   if (res.code === 0) {
     message.success("Logout successfully!");
     await store.dispatch("user/getLoginUser");
-    curUsername.value = "Please Login";
     router.replace("/user/login");
   }
 };
