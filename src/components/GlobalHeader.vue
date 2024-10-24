@@ -23,7 +23,7 @@
     </a-col>
     <a-col flex="100px">
       <div @click="goLoginout" style="cursor: pointer">
-        {{ store.state.user?.loginUser?.userAccount ?? "Please Log In" }}
+        {{ curUsername }}
       </div>
     </a-col>
   </a-row>
@@ -32,14 +32,26 @@
 <script setup lang="ts">
 import { routes } from "../router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import ACCESS_ENUM from "@/access/accessEnum";
+import { UserControllerService } from "../../generated";
+import message from "@arco-design/web-vue/es/message";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+
+const curUsername = ref("Please Login");
+
+watch(
+  store.state.user,
+  () => {
+    curUsername.value =
+      store.state.user?.loginUser?.userAccount ?? "Please Login";
+  },
+  { deep: true }
+);
 
 // 展示在菜单的路由数组
 const visibleRoutes = computed(() => {
@@ -63,8 +75,12 @@ router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
-setTimeout(() => {
-  store.dispatch("user/getLoginUser");
+setTimeout(async () => {
+  await store.dispatch("user/getLoginUser");
+  if (store.state.user?.loginUser?.userAccount && route.path == "/user/login") {
+    message.success("Already Login!");
+    router.replace("/");
+  }
 }, 1000);
 
 const doMenuClick = (key: string) => {
@@ -74,8 +90,20 @@ const doMenuClick = (key: string) => {
 };
 
 const goLoginout = () => {
-  if (!store.state.user?.loginUser?.userAccount) {
-    router.push("/user/login");
+  if (store.state.user?.loginUser?.userAccount) {
+    logout();
+    return;
+  }
+  router.push("/user/login");
+};
+
+const logout = async () => {
+  const res = await UserControllerService.userLogoutUsingPost();
+  if (res.code === 0) {
+    message.success("Logout successfully!");
+    await store.dispatch("user/getLoginUser");
+    curUsername.value = "Please Login";
+    router.replace("/user/login");
   }
 };
 </script>
