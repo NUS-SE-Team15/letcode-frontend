@@ -29,6 +29,11 @@
           Login
         </a-button>
       </a-form-item>
+      <a-form-item>
+        <a-button type="outline" style="width: 120px" @click="goRegister">
+          Go Register
+        </a-button>
+      </a-form-item>
     </a-form>
   </div>
 </template>
@@ -67,5 +72,9 @@ const handleSubmit = async () => {
   } else {
     message.error("Fail to login, " + res.message);
   }
+};
+
+const goRegister = () => {
+  router.replace("/user/register");
 };
 </script>
