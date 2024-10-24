@@ -42,6 +42,9 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/question_submit",
     name: "Submit History",
     component: QuestionSubmitView,
+    meta: {
+      access: ACCESS_ENUM.USER,
+    },
   },
   {
     path: "/view/question/:id",
