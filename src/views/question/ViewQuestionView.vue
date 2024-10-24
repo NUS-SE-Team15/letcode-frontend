@@ -46,7 +46,7 @@
           class="mt-4"
         >
           <template #judgeInfo="{ record }">
-            {{ JSON.stringify(record.judgeInfo) }}
+            {{ formatJudgeInfo(record.judgeInfo) }}
           </template>
           <template #createTime="{ record }">
             {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
@@ -132,6 +132,14 @@ const form = ref<QuestionSubmitAddRequest>({
   language: "java",
   code: "",
 });
+
+/**
+ * 格式化 JudgeInfo，过滤掉 memory 字段
+ */
+const formatJudgeInfo = (judgeInfo: any) => {
+  const { memory, ...filteredInfo } = judgeInfo;
+  return JSON.stringify(filteredInfo, null, 2);
+};
 
 /**
  * 加载题目数据
@@ -242,10 +250,6 @@ const columns = [
     slotName: "judgeInfo",
   },
   {
-    title: "Status",
-    dataIndex: "status",
-  },
-  {
     title: "CreateTime",
     slotName: "createTime",
   },
@@ -255,6 +259,7 @@ const changeCode = (value: string) => {
   form.value.code = value;
 };
 </script>
+
 <style>
 #viewQuestionView {
   max-width: 1400px;

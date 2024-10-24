@@ -41,7 +41,7 @@
       @page-change="onPageChange"
     >
       <template #judgeInfo="{ record }">
-        {{ JSON.stringify(record.judgeInfo) }}
+        {{ formatJudgeInfo(record.judgeInfo) }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
@@ -62,7 +62,6 @@ import { useRouter } from "vue-router";
 import moment from "moment";
 
 const tableRef = ref();
-
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref<QuestionSubmitQueryRequest>({
@@ -71,6 +70,14 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   pageSize: 10,
   current: 1,
 });
+
+/**
+ * 格式化 JudgeInfo，过滤掉 memory 字段
+ */
+const formatJudgeInfo = (judgeInfo: any) => {
+  const { memory, ...filteredInfo } = judgeInfo;
+  return JSON.stringify(filteredInfo, null, 2);
+};
 
 const loadData = async () => {
   const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
@@ -88,16 +95,10 @@ const loadData = async () => {
   }
 };
 
-/**
- * 监听 searchParams 变量，改变时触发页面的重新加载
- */
 watchEffect(() => {
   loadData();
 });
 
-/**
- * 页面加载时，请求数据
- */
 onMounted(() => {
   loadData();
 });
@@ -114,10 +115,6 @@ const columns = [
   {
     title: "JudgeInfo",
     slotName: "judgeInfo",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
   },
   {
     title: "QuestionId",
@@ -142,21 +139,13 @@ const onPageChange = (page: number) => {
 
 const router = useRouter();
 
-/**
- * 跳转到做题页面
- * @param question
- */
 const toQuestionPage = (question: Question) => {
   router.push({
     path: `/view/question/${question.id}`,
   });
 };
 
-/**
- * 确认搜索，重新加载数据
- */
 const doSubmit = () => {
-  // 这里需要重置搜索页号
   searchParams.value = {
     ...searchParams.value,
     current: 1,
