@@ -36,7 +36,7 @@
       </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit" style="width: 120px">
-          注册
+          Register
         </a-button>
       </a-form-item>
     </a-form>

@@ -22,7 +22,7 @@
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <div>
+      <div @click="goLoginout" style="cursor: pointer">
         {{ store.state.user?.loginUser?.userAccount ?? "Please Log In" }}
       </div>
     </a-col>
@@ -65,12 +65,18 @@ router.afterEach((to, from, failure) => {
 
 setTimeout(() => {
   store.dispatch("user/getLoginUser");
-}, 3000);
+}, 1000);
 
 const doMenuClick = (key: string) => {
   router.push({
     path: key,
   });
+};
+
+const goLoginout = () => {
+  if (!store.state.user?.loginUser?.userAccount) {
+    router.push("/user/login");
+  }
 };
 </script>
 
