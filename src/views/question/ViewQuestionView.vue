@@ -253,6 +253,10 @@ const columns = [
     title: "CreateTime",
     slotName: "createTime",
   },
+  {
+    title: "Status",
+    slotName: "status",
+  },
 ];
 
 const changeCode = (value: string) => {
