@@ -118,8 +118,8 @@ const formatStatus = (status: number | string) => {
   const statusMap: { [key: string]: string } = {
     "0": "Pending evaluation ",
     "1": "Evaluating ",
-    "2": "Evaluation passed ",
-    "3": "Evaluation failed ",
+    "2": "Evaluated(Compilation success) ",
+    "3": "Evaluated(Compilation failed)",
   };
   return statusMap[status] || "Unknown state";
 };
