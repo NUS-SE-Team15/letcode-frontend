@@ -22,7 +22,8 @@ export const OpenAPI: OpenAPIConfig = {
   // 在开发环境下，BASE 为 /api，通过 Vue CLI 代理；在生产环境下，使用实际的后端服务器地址
   // BASE: "http://127.0.0.1:8101",
   // BASE: process.env.NODE_ENV === 'development' ? '/api' : 'http://LetCodeLB-457706603.ap-southeast-1.elb.amazonaws.com:8101',
-  BASE: process.env.NODE_ENV === 'development' ? '/api' : 'http://43.134.114.17',
+  // BASE: process.env.NODE_ENV === 'development' ? '/api' : 'http://43.134.114.17',
+  BASE: 'http://43.134.114.17', // 前端打到服务器地址上,接口带/api会被nginx转发给服务器本机的8101端口
   VERSION: "1.0",
   WITH_CREDENTIALS: true, // 允许携带 Cookie 和其他凭证
   CREDENTIALS: "include",
