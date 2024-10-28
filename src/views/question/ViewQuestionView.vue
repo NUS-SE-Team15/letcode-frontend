@@ -177,16 +177,24 @@ const doSubmit = async () => {
   }
 };
 
+let pollingCount = 0; // 轮询计数器
+
 /**
  * 启动轮询获取最新的提交记录
  */
 const startPolling = () => {
   pollingInterval.value = setInterval(async () => {
+    pollingCount++;
     const res = await fetchLatestSubmission();
     if (res && res.status !== 1) {
       // 如果状态不再是“评测中”，停止轮询
       stopPolling();
       message.success(`Judgment completed: ${formatStatus(res.status)}`);
+    } else if (pollingCount >= 3) {
+      // 如果轮询达到3次，停止轮询
+      stopPolling();
+      // message.warning("Polling stopped: No valid response after 3 attempts.");
+      message.warning("Compilation failed");
     }
   }, 3000); // 每3秒轮询一次
 };
@@ -199,6 +207,7 @@ const stopPolling = () => {
     clearInterval(pollingInterval.value);
     pollingInterval.value = null;
   }
+  pollingCount = 0; // 重置计数器
 };
 
 /**
