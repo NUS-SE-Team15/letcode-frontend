@@ -194,7 +194,9 @@ const startPolling = () => {
       // 如果轮询达到3次，停止轮询
       stopPolling();
       // message.warning("Polling stopped: No valid response after 3 attempts.");
+      // todo: 目前代码沙箱无法返回时前端直接设为编译错误
       message.warning("Compilation failed");
+      latestSubmission.value.status = 3;
     }
   }, 3000); // 每3秒轮询一次
 };
