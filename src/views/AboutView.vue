@@ -2,7 +2,7 @@
   <div class="about-me">
     <h1>About Us</h1>
     <p>{{ authorInfo.name }}</p>
-    <p>{{ authorInfo.us }} years old</p>
+    <p>{{ authorInfo.us }}</p>
     <p>{{ authorInfo.bio }}</p>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
     return {
       authorInfo: {
         projname: "LetCode",
-        us: "Nus Iss SE Team15",
+        us: "NUS ISS SE Team15",
         bio: "A passionate dev team having interest in Software Engineering",
       },
     };
