@@ -8,7 +8,9 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="https://leetcode.com/" target="_blank"> Team 15 </a>
+        <a href="https://github.com/NUS-SE-Team15/" target="_blank">
+          Team 15
+        </a>
       </a-layout-footer>
     </a-layout>
   </div>
