@@ -1,10 +1,18 @@
 <template>
   <div id="viewQuestionView">
     <a-row :gutter="[24, 24]">
-      <!-- 左侧：题目详情（左上）和提交结果表格（左下） -->
+      <!-- 左侧：题目详情/讨论帖子/提交详情表格 -->
       <a-col :md="12" :xs="24">
-        <!-- 题目详情部分 -->
-        <a-tabs default-active-key="question" class="mb-4">
+        <a-tabs
+          :active-key="tabActiveKey"
+          class="mb-4"
+          @tab-click="
+            (key) => {
+              tabActiveKey = key;
+            }
+          "
+        >
+          <!-- 题目详情部分 -->
           <a-tab-pane key="question" title="Question">
             <a-card v-if="question" :title="question.title">
               <a-descriptions
@@ -35,26 +43,35 @@
               </template>
             </a-card>
           </a-tab-pane>
+          <!-- 讨论帖子部分 -->
+          <a-tab-pane key="discussion" title="Discussion">
+            <QuestionPosts :questionId="props.id" />
+          </a-tab-pane>
+          <a-tab-pane
+            key="submission"
+            title="Submission"
+            v-if="latestSubmission"
+          >
+            <!-- 提交结果表格部分 -->
+            <a-table
+              v-if="latestSubmission"
+              :columns="columns"
+              :data="[latestSubmission]"
+              :pagination="false"
+              class="mt-4"
+            >
+              <template #judgeInfo="{ record }">
+                {{ formatJudgeInfo(record.judgeInfo) }}
+              </template>
+              <template #createTime="{ record }">
+                {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+              </template>
+              <template #status="{ record }">
+                {{ formatStatus(record.status) }}
+              </template>
+            </a-table>
+          </a-tab-pane>
         </a-tabs>
-
-        <!-- 提交结果表格部分 -->
-        <a-table
-          v-if="latestSubmission"
-          :columns="columns"
-          :data="[latestSubmission]"
-          :pagination="false"
-          class="mt-4"
-        >
-          <template #judgeInfo="{ record }">
-            {{ formatJudgeInfo(record.judgeInfo) }}
-          </template>
-          <template #createTime="{ record }">
-            {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
-          </template>
-          <template #status="{ record }">
-            {{ formatStatus(record.status) }}
-          </template>
-        </a-table>
       </a-col>
 
       <!-- 右侧：代码编辑器和提交按钮 -->
@@ -94,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, defineProps, withDefaults } from "vue";
+import { onMounted, ref, defineProps, withDefaults, watch } from "vue";
 import {
   Question,
   QuestionControllerService,
@@ -104,6 +121,7 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
+import QuestionPosts from "./components/QuestionPosts.vue";
 import moment from "moment";
 
 interface Props {
@@ -130,8 +148,24 @@ const pollingInterval = ref<number | null>(null); // 存储轮询的 interval ID
 
 const form = ref<QuestionSubmitAddRequest>({
   language: "java",
-  code: "",
+  code: `public class Main {
+    public static void main(String[] args) {
+        
+    }
+}`,
 });
+
+// 标签页key: 默认question,有submit结果表格时切到submission
+const tabActiveKey = ref<string | number>("question");
+watch(
+  latestSubmission,
+  (newsubmit, oldsubmit) => {
+    if (!newsubmit) return;
+    if (!oldsubmit || oldsubmit.id !== newsubmit?.id)
+      tabActiveKey.value = "submission";
+  },
+  { deep: true }
+);
 
 /**
  * 格式化 JudgeInfo，过滤掉 memory 字段
