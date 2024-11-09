@@ -16,125 +16,162 @@
         <template #default>Send</template>
       </a-button>
     </div>
-    <a-divider />
+    <a-divider margin="0" />
     <div id="posts-container">
-      <a-list :scrollbar="true" :bordered="false">
+      <a-list
+        :bordered="false"
+        :data="postsData"
+        :pagination-props="{
+          showTotal: true,
+          pageSize: listPostParams.pageSize,
+          current: listPostParams.current,
+          total: listPostTotal,
+        }"
+        @page-change="onPageChange"
+      >
         <!-- <template #header>Discussion Posts</template> -->
         <template #empty><a-empty description="No Content" /></template>
-        <template #scroll-loading>No more data</template>
-        <a-list-item
-          v-for="(post, idx) in posts"
-          :key="post"
-          action-layout="vertical"
-        >
-          <a-list-item-meta
-            :title="post.userAccount"
-            :description="post.content"
-          ></a-list-item-meta>
-          <span class="post-time">{{ post.createTime }}</span>
-          <template #actions>
-            <span @click="doThumbPost(post)" style="user-select: none">
-              <icon-thumb-up /> {{ post.thumbTimes }}
+        <template #item="{ item }">
+          <a-list-item action-layout="vertical">
+            <a-list-item-meta
+              :title="item.user?.userAccount"
+              :description="item.content"
+            ></a-list-item-meta>
+            <span class="post-time">
+              {{ moment(item.createTime).format("YYYY-MM-DD HH:mm:ss") }}
             </span>
-            <a-popconfirm
-              type="warning"
-              content="Are you sure to delete this post?"
-              okText="Delete"
-              cancelText="Cancel"
-              @ok="doDeletePost(idx)"
-              v-if="isPostDeletable(post)"
-            >
-              <span><icon-delete /></span>
-            </a-popconfirm>
-          </template>
-        </a-list-item>
+            <template #actions>
+              <span @click="switchThumbPost(item)" style="user-select: none">
+                <icon-thumb-up-fill v-if="item.hasThumb" />
+                <icon-thumb-up v-else />
+                {{ item.thumbNum }}
+              </span>
+              <a-popconfirm
+                type="warning"
+                content="Are you sure to delete this post?"
+                okText="Delete"
+                cancelText="Cancel"
+                @ok="doDeletePost(item)"
+                v-if="isPostDeletable(item)"
+              >
+                <span><icon-delete /></span>
+              </a-popconfirm>
+            </template>
+          </a-list-item>
+        </template>
       </a-list>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref, withDefaults } from "vue";
+import { defineProps, onMounted, ref, watchEffect, withDefaults } from "vue";
+import moment from "moment";
+import message from "@arco-design/web-vue/es/message";
 import {
   IconSend,
   IconDelete,
   IconThumbUp,
+  IconThumbUpFill,
 } from "@arco-design/web-vue/es/icon";
-import message from "@arco-design/web-vue/es/message";
+import {
+  PostVO,
+  PostControllerService,
+  PostThumbControllerService,
+  PostQueryRequest,
+} from "../../../../generated";
 import { useStore } from "vuex";
 
 const store = useStore();
 
+// props transfer quesitonId
 interface Props {
-  questionId: string;
+  questionId: number;
 }
 const props = withDefaults(defineProps<Props>(), {
-  questionId: () => "",
+  questionId: () => 0,
 });
 
 const textInput = ref<string>("");
-const posts = ref<Array<any>>([]);
+const postsData = ref<PostVO[]>([]);
 
-const isPostDeletable = (post: any) => {
+// pagination param
+const listPostParams = ref<PostQueryRequest>({
+  pageSize: 5,
+  current: 1,
+});
+const listPostTotal = ref<number>(0);
+
+// load data according to pagination param
+const fetchQuestionPosts = async () => {
+  const res = await PostControllerService.listPostVoByPageUsingPost(
+    listPostParams.value
+  );
+  if (res.code === 0) {
+    postsData.value = res.data.records || [];
+    listPostTotal.value = Number(res.data.total);
+  } else {
+    message.error("load posts failed");
+  }
+};
+
+// watch listPostParams update, then fetchdata
+watchEffect(() => {
+  fetchQuestionPosts();
+});
+
+const onPageChange = (page: number) => {
+  listPostParams.value.current = page;
+};
+
+// only post owner and admin can delete
+const isPostDeletable = (post: PostVO) => {
   const u = store.state.user?.loginUser;
-  return u?.userRole === "admin" || u?.userAccount === post.userAccount;
+  return u?.userRole === "admin" || u?.userAccount === post?.user?.userAccount;
 };
 
-const fetchQuestionPosts = () => {
-  posts.value = [
-    {
-      userAccount: "whqwq",
-      createTime: "2024-08-08 20:08:46",
-      thumbTimes: 20,
-      content:
-        "Protect this branch from force pushing or deletion, or require status checks before merging. View documentation.",
-    },
-    {
-      userAccount: "whqwq2",
-      createTime: "2024-08-08 20:08:46",
-      thumbTimes: 20,
-      content:
-        "Protect this branch from force pushing or deletion, or require status checks before merging. View documentation.",
-    },
-    {
-      userAccount: "whqwq3",
-      createTime: "2024-08-08 20:08:46",
-      thumbTimes: 20,
-      content:
-        "Protect this branch from force pushing or deletion, or require status checks before merging. View documentation.",
-    },
-    {
-      userAccount: "whqwq4",
-      createTime: "2024-08-08 20:08:46",
-      thumbTimes: 20,
-      content:
-        "Protect this branch from force pushing or deletion, or require status checks before merging. View documentation.",
-    },
-  ];
-};
-
-const doSubmitPost = () => {
+// send a new post
+const doSubmitPost = async () => {
   const u = store.state.user?.loginUser;
   if (!textInput.value || u?.userRole === "notLogin") {
-    message.info("Post content is EMPTY!");
+    message.info("PostVO content is EMPTY!");
     return;
   }
-  message.success("Send post successfully!");
-  const newp = {
-    userAccount: u.userAccount,
-    createTime: new Date().getTime(),
+  const res = await PostControllerService.addPostUsingPost({
     content: textInput.value,
-  };
-  posts.value?.splice(0, 0, newp);
+    title: textInput.value.slice(0, 5),
+    questionId: props.questionId,
+    tags: [],
+  });
+  if (res.code === 0) {
+    textInput.value = "";
+    message.success("Send post successfully!");
+    fetchQuestionPosts();
+  } else {
+    message.error("Post failed");
+  }
 };
 
-const doDeletePost = (pidx: number) => {
-  message.success("Post Deleted!");
-  posts.value?.splice(pidx, 1);
+const doDeletePost = async (post: PostVO) => {
+  const res = await PostControllerService.deletePostUsingPost({
+    id: post.id,
+  });
+  if (res.code === 0) {
+    message.success("Post Deleted!");
+    fetchQuestionPosts();
+  }
 };
 
-const doThumbPost = (post: any) => {
-  post.thumbTimes++;
+const switchThumbPost = async (post: PostVO) => {
+  // 目前只有点赞,没有取消点赞
+  if (!post.hasThumb) {
+    const res = await PostThumbControllerService.doThumbUsingPost({
+      postId: post.id,
+    });
+    if (res.code === 0) {
+      fetchQuestionPosts();
+    }
+  }
 };
 
 onMounted(() => {

@@ -8,3 +8,5 @@ import "@arco-design/web-vue/dist/arco.css";
 import "bytemd/dist/index.css";
 
 createApp(App).use(ArcoVue).use(store).use(router).mount("#app");
+
+// import "@/access";
