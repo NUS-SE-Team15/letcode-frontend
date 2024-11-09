@@ -22,8 +22,14 @@ npm run build
 
 ```
 npm run lint
+npx prettier --write .
 ```
 
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### API Generation From Backend
+```
+openapi -i http://localhost:8101/api/v2/api-docs -o ./generated
+```
